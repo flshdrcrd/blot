@@ -1,15 +1,31 @@
-const START_X = 0
-const START_Y = 250
+const TEXT = "HELLO WORLD"
+
+const START_X = 90
+const START_Y = 300
+
 const LETTER_WIDTH = 5
 const LETTER_HEIGHT = 10
 const LETTER_GAP = 1
-const TEXT = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+const DOC_WIDTH = 350;
+const DOC_HEIGHT = 350;
+
+const PAGE_WIDTH = 210;
+const PAGE_HEIGHT = 297;
 
 // - - - - - - - - - -
 
-const width = 200;
-const height = 300;
-setDocDimensions(width, height);
+setDocDimensions(DOC_WIDTH, DOC_HEIGHT);
+drawPage(PAGE_WIDTH, PAGE_HEIGHT);
+drawText(TEXT);
+
+function drawPage(w, h) {
+  const sq = new bt.Turtle();
+  for (let i = 0; i < 4; i++) sq.forward(1).right(90);
+  const page = bt.scale(sq.lines(), [w, h]);
+  bt.translate(page, [DOC_WIDTH / 2, DOC_HEIGHT / 2], bt.bounds(page).cc);
+  drawLines(page);
+}
 
 function drawLetter(letter, x, y, w, h) {
   let t = y + h;
@@ -22,6 +38,8 @@ function drawLetter(letter, x, y, w, h) {
   let tl = [x, y + h];
   let tr = [x + w, y + h];
 
+  let lines;
+
   if (letter == 'A') {
     let line_0 = [
       bl,
@@ -32,10 +50,7 @@ function drawLetter(letter, x, y, w, h) {
       br
     ];
     let line_2 = [bt.bounds([line_0]).cc, bt.bounds([line_1]).cc];
-
-    let lines = [line_0, line_1, line_2];
-    drawLines(lines);
-
+    lines = [line_0, line_1, line_2];
   } else if (letter == 'B') {
     let line_0 = [
       bl,
@@ -55,9 +70,7 @@ function drawLetter(letter, x, y, w, h) {
     ];
     let line_3 = bt.nurbs(line_1);
     let line_4 = bt.nurbs(line_2);
-
-    let lines = [line_0, line_3, line_4];
-    drawLines(lines);
+    lines = [line_0, line_3, line_4];
   } else if (letter == 'C') {
     let line_0 = [
       tr,
@@ -65,11 +78,8 @@ function drawLetter(letter, x, y, w, h) {
       bl,
       br
     ];
-
     let line_1 = bt.nurbs(line_0);
-
-    let lines = [line_1];
-    drawLines(lines);
+    lines = [line_1];
   } else if (letter == 'D') {
     let line_0 = [
       tl,
@@ -82,9 +92,7 @@ function drawLetter(letter, x, y, w, h) {
       bl
     ];
     let line_2 = bt.nurbs(line_1);
-
-    let lines = [line_0, line_2];
-    drawLines(lines);
+    lines = [line_0, line_2];
   } else if (letter == 'E') {
     let line_0 = [
       tl,
@@ -102,9 +110,7 @@ function drawLetter(letter, x, y, w, h) {
       bl,
       br
     ];
-
-    let lines = [line_0, line_1, line_2, line_3];
-    drawLines(lines);
+    lines = [line_0, line_1, line_2, line_3];
   } else if (letter == 'F') {
     let line_0 = [
       tl,
@@ -118,9 +124,7 @@ function drawLetter(letter, x, y, w, h) {
       [r, t - h / 2],
       [l, t - h / 2]
     ];
-
-    let lines = [line_0, line_1, line_2];
-    drawLines(lines);
+    lines = [line_0, line_1, line_2];
   } else if (letter == 'G') {
     let line_0 = [
       tr,
@@ -134,9 +138,7 @@ function drawLetter(letter, x, y, w, h) {
       [r - w / 2, t - h / 2]
     ];
     let line_2 = bt.nurbs(line_0);
-
-    let lines = [line_1, line_2];
-    drawLines(lines);
+    lines = [line_1, line_2];
   } else if (letter == 'H') {
     let line_0 = [
       tl,
@@ -150,8 +152,7 @@ function drawLetter(letter, x, y, w, h) {
       tr,
       br
     ];
-    let lines = [line_0, line_1, line_2];
-    drawLines(lines);
+    lines = [line_0, line_1, line_2];
   } else if (letter == 'I') {
     let line_0 = [
       [r - w / 2, t],
@@ -165,8 +166,7 @@ function drawLetter(letter, x, y, w, h) {
       [l + w / 4, b],
       [r - w / 4, b],
     ];
-    let lines = [line_0, line_1, line_2];
-    drawLines(lines);
+    lines = [line_0, line_1, line_2];
   } else if (letter == 'J') {
     let line_0 = [
       [r, t],
@@ -183,8 +183,7 @@ function drawLetter(letter, x, y, w, h) {
       tr,
     ];
     let line_3 = bt.nurbs(line_1);
-    let lines = [line_0, line_2, line_3];
-    drawLines(lines);
+    lines = [line_0, line_2, line_3];
   } else if (letter == 'K') {
     let line_0 = [
       tl,
@@ -198,8 +197,7 @@ function drawLetter(letter, x, y, w, h) {
       [l, t - h / 2],
       br
     ];
-    let lines = [line_0, line_1, line_2];
-    drawLines(lines);
+    lines = [line_0, line_1, line_2];
   } else if (letter == 'L') {
     let line_0 = [
       tl,
@@ -209,9 +207,7 @@ function drawLetter(letter, x, y, w, h) {
       bl,
       br
     ];
-
-    let lines = [line_0, line_1];
-    drawLines(lines);
+    lines = [line_0, line_1];
   } else if (letter == 'M') {
     let line_0 = [
       bl,
@@ -220,9 +216,7 @@ function drawLetter(letter, x, y, w, h) {
       tr,
       br
     ];
-
-    let lines = [line_0];
-    drawLines(lines);
+    lines = [line_0];
   } else if (letter == 'N') {
     let line_0 = [
       bl,
@@ -230,9 +224,7 @@ function drawLetter(letter, x, y, w, h) {
       br,
       tr
     ];
-
-    let lines = [line_0];
-    drawLines(lines);
+    lines = [line_0];
   } else if (letter == 'O') {
     let line_0 = [
       tr,
@@ -242,8 +234,7 @@ function drawLetter(letter, x, y, w, h) {
       tr
     ];
     let line_1 = bt.nurbs(line_0);
-    let lines = [line_1];
-    drawLines(lines);
+    lines = [line_1];
   } else if (letter == 'P') {
     let line_0 = [
       bl,
@@ -257,9 +248,7 @@ function drawLetter(letter, x, y, w, h) {
     ];
 
     let line_2 = bt.nurbs(line_1);
-
-    let lines = [line_0, line_2];
-    drawLines(lines);
+    lines = [line_0, line_2];
   } else if (letter == 'Q') {
     let line_0 = [
       tr,
@@ -273,8 +262,7 @@ function drawLetter(letter, x, y, w, h) {
       br
     ];
     let line_2 = bt.nurbs(line_0);
-    let lines = [line_1, line_2];
-    drawLines(lines);
+    lines = [line_1, line_2];
   } else if (letter == 'R') {
     let line_0 = [
       bl,
@@ -291,9 +279,7 @@ function drawLetter(letter, x, y, w, h) {
       br
     ];
     let line_3 = bt.nurbs(line_1);
-
-    let lines = [line_0, line_2, line_3];
-    drawLines(lines);
+    lines = [line_0, line_2, line_3];
   } else if (letter == 'S') {
     let line_0 = [
       tr,
@@ -304,14 +290,95 @@ function drawLetter(letter, x, y, w, h) {
       bl
     ];
     let line_1 = bt.nurbs(line_0);
-
-    let lines = [line_1];
-    drawLines(lines);
+    lines = [line_1];
+  } else if (letter == 'T') {
+    let line_0 = [
+      [r - w / 2, t],
+      [r - w / 2, b]
+    ];
+    let line_1 = [
+      tl,
+      tr
+    ];
+    lines = [line_0, line_1];
+  } else if (letter == 'U') {
+    let line_0 = [
+      tl,
+      bl,
+      br,
+      tr
+    ];
+    let line_1 = bt.nurbs(line_0);
+    lines = [line_1];
+  } else if (letter == 'V') {
+    let line_0 = [
+      tl,
+      [r - w / 2, b],
+      tr
+    ];
+    lines = [line_0];
+  } else if (letter == 'W') {
+    let line_0 = [
+      tl,
+      [l + w / 6, b],
+      [r - w / 2, t - h / 2],
+      [r - w / 6, b],
+      tr
+    ];
+    lines = [line_0];
+  } else if (letter == 'X') {
+    let line_0 = [
+      tl,
+      br
+    ];
+    let line_1 = [
+      tr,
+      bl
+    ];
+    lines = [line_0, line_1];
+  } else if (letter == 'Y') {
+    let line_0 = [
+      tl,
+      [r - w / 2, t - h / 2],
+      tr,
+    ];
+    let line_1 = [
+      [r - w / 2, t - h / 2],
+      [r - w / 2, b]
+    ];
+    lines = [line_0, line_1];
+  } else if (letter == 'Z') {
+    let line_0 = [
+      tl,
+      tr,
+      bl,
+      br
+    ];
+    lines = [line_0];
+  } else if (letter != ' ') {
+    let line_0 = [
+      tl,
+      br
+    ];
+    let line_1 = [
+      tr,
+      bl
+    ];
+    let line_2 = [
+      tr,
+      tl,
+      bl,
+      br,
+      tr
+    ];
+    lines = [line_0, line_1, line_2];
   }
-
+  drawLines(lines);
 }
 
-let splitText = TEXT.split("")
-for (let i = 0; i < splitText.length; i++) {
-  drawLetter(splitText[i], START_X + i * (LETTER_WIDTH + LETTER_GAP), START_Y, LETTER_WIDTH, LETTER_HEIGHT);
+function drawText(input) {
+  let splitText = input.split("")
+  for (let i = 0; i < splitText.length; i++) {
+    drawLetter(splitText[i], START_X + i * (LETTER_WIDTH + LETTER_GAP), START_Y, LETTER_WIDTH, LETTER_HEIGHT);
+  }
 }
