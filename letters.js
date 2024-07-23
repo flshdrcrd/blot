@@ -1,18 +1,21 @@
-const TEXT = "   ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890"
-const FONT_SIZE = 28
+// available characters:
+// ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890?!.
 
-const START_X = 90
-const START_Y = 300
+const TEXT = "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG";
+const FONT_SIZE = 28; // pt
 
-const LETTER_GAP = 1
+const SIDE_MARGIN = 10; // mm
+const TOP_MARGIN = 18; // mm
 
-const DOC_WIDTH = 350;
-const DOC_HEIGHT = 350;
+const DOC_WIDTH = 350; // mm
+const DOC_HEIGHT = 350; // mm
 
-const PAGE_WIDTH = 210;
-const PAGE_HEIGHT = 297;
+const PAGE_WIDTH = 210; // mm
+const PAGE_HEIGHT = 297; // mm
 
 // - - - - - - - - - -
+
+let page_start;
 
 setDocDimensions(DOC_WIDTH, DOC_HEIGHT);
 drawPage(PAGE_WIDTH, PAGE_HEIGHT);
@@ -23,15 +26,23 @@ function drawPage(w, h) {
   for (let i = 0; i < 4; i++) sq.forward(1).right(90);
   const page = bt.scale(sq.lines(), [w, h]);
   bt.translate(page, [DOC_WIDTH / 2, DOC_HEIGHT / 2], bt.bounds(page).cc);
+  page_start = bt.bounds(page).lt;
   drawLines(page);
 }
 
 function drawText(input) {
   let letter_height = FONT_SIZE / 72 * 25.4
   let letter_width = letter_height * 0.5
+  let x = page_start[0] + SIDE_MARGIN;
+  let y = page_start[1] - letter_height - TOP_MARGIN;
   let splitText = input.split("")
   for (let i = 0; i < splitText.length; i++) {
-    drawChar(splitText[i], START_X + i * (letter_width + LETTER_GAP), START_Y, letter_width, letter_height);
+    drawChar(splitText[i], x, y, letter_width, letter_height);
+    x = x + letter_width + 1;
+    if ((x > page_start[0] + PAGE_WIDTH - SIDE_MARGIN) && (splitText[i+1] != ' ')) {
+      y = y - letter_height * 1.5 - 2;
+      x = page_start[0] + SIDE_MARGIN;
+    }
   }
 }
 
@@ -429,13 +440,15 @@ function drawChar(letter, x, y, w, h) {
     lines = [line_0, line_2];
   } else if (letter == '6') {
     let line_0 = [
+      [r, t - h / 8],
       tr,
       tl,
+      [l, t - h / 2],
       bl,
       br,
       [r, t - h / 2],
-      [l, t - h / 2],
-      [l, b + h / 4],
+      [l, b + h / 2],
+      [l, b + h / 3],
     ];
     let line_1 = bt.nurbs(line_0);
     lines = [line_1];
@@ -452,17 +465,73 @@ function drawChar(letter, x, y, w, h) {
       tl,
       [l, t - h / 2],
       [r, t - h / 2],
-
       br,
       bl,
       [l, t - h / 2],
       [r, t - h / 2],
       [r, t],
-
-
     ];
     let line_1 = bt.nurbs(line_0);
     lines = [line_1];
+  } else if (letter == '9') {
+    let line_0 = [
+      [l, b + h / 8],
+      bl,
+      br,
+      [r, b + h / 2],
+      tr,
+      tl,
+      [l, b + h / 2],
+      [r, t - h / 2],
+      [r, t - h / 3],
+    ];
+    let line_1 = bt.nurbs(line_0);
+    lines = [line_1];
+  } else if (letter == '0') {
+    let line_0 = [
+      tr,
+      tl,
+      bl,
+      br,
+      tr
+    ];
+    let line_1 = [
+      [r - w / 8, t - h / 8],
+      [l + w / 8, b + h / 8],
+    ];
+    let line_2 = bt.nurbs(line_0);
+    lines = [line_1, line_2];
+  } else if (letter == '?') {
+    let line_0 = [
+      [l, t - h / 6],
+      tl,
+      tr,
+      [r, t - h / 2],
+      [r - w / 2, b + h / 3],
+      [r - w / 2, b + h / 6],
+    ];
+    let line_1 = [
+      [r - w / 2, b + h / 20],
+      [r - w / 2, b],
+    ];
+    let line_2 = bt.nurbs(line_0);
+    lines = [line_1, line_2];
+  } else if (letter == '!') {
+    let line_0 = [
+      [r - w / 2, t],
+      [r - w / 2, b + h / 6],
+    ];
+    let line_1 = [
+      [r - w / 2, b + h / 20],
+      [r - w / 2, b],
+    ];
+    lines = [line_0, line_1];
+  } else if (letter == '.') {
+    let line_0 = [
+      [r - w / 2, b + h / 20],
+      [r - w / 2, b],
+    ];
+    lines = [line_0];
   } else if (letter != ' ') {
     let line_0 = [
       tl,
