@@ -1,10 +1,9 @@
-const TEXT = "HELLO WORLD"
+const TEXT = "   ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890"
+const FONT_SIZE = 28
 
 const START_X = 90
 const START_Y = 300
 
-const LETTER_WIDTH = 5
-const LETTER_HEIGHT = 10
 const LETTER_GAP = 1
 
 const DOC_WIDTH = 350;
@@ -27,7 +26,16 @@ function drawPage(w, h) {
   drawLines(page);
 }
 
-function drawLetter(letter, x, y, w, h) {
+function drawText(input) {
+  let letter_height = FONT_SIZE / 72 * 25.4
+  let letter_width = letter_height * 0.5
+  let splitText = input.split("")
+  for (let i = 0; i < splitText.length; i++) {
+    drawChar(splitText[i], START_X + i * (letter_width + LETTER_GAP), START_Y, letter_width, letter_height);
+  }
+}
+
+function drawChar(letter, x, y, w, h) {
   let t = y + h;
   let b = y;
   let l = x;
@@ -355,6 +363,106 @@ function drawLetter(letter, x, y, w, h) {
       br
     ];
     lines = [line_0];
+  } else if (letter == '1') {
+    let line_0 = [
+      [l + w / 6, t - w / 2],
+      [r - w / 2, t],
+      [r - w / 2, b],
+    ];
+    let line_1 = [
+      [l + w / 6, b],
+      [r - w / 6, b],
+    ];
+    lines = [line_0, line_1];
+  } else if (letter == '2') {
+    let line_0 = [
+      [l, t - h / 6],
+      tl,
+      tr,
+      [r, t - h / 2],
+      bl,
+    ];
+    let line_1 = [
+      bl,
+      br
+    ];
+    let line_2 = bt.nurbs(line_0);
+    lines = [line_1, line_2];
+  } else if (letter == '3') {
+    let line_0 = [
+      tl,
+      tr,
+      [r, t - h / 2],
+      [l + w / 3, t - h / 2]
+    ];
+    let line_1 = [
+      [l + w / 3, t - h / 2],
+      [r, t - h / 2],
+      br,
+      bl
+    ];
+    let line_2 = bt.nurbs(line_0);
+    let line_3 = bt.nurbs(line_1);
+    lines = [line_2, line_3];
+  } else if (letter == '4') {
+    let line_0 = [
+      [r, b + h / 3],
+      [l, b + h / 3],
+      [r - w / 3, t],
+      [r - w / 3, b]
+    ];
+    lines = [line_0];
+  } else if (letter == '5') {
+    let line_0 = [
+      tr,
+      tl,
+      [l, t - h / 2],
+
+    ];
+    let line_1 = [
+      [l, t - h / 2],
+      [r, t - h / 2],
+      br,
+      bl
+    ];
+    let line_2 = bt.nurbs(line_1);
+    lines = [line_0, line_2];
+  } else if (letter == '6') {
+    let line_0 = [
+      tr,
+      tl,
+      bl,
+      br,
+      [r, t - h / 2],
+      [l, t - h / 2],
+      [l, b + h / 4],
+    ];
+    let line_1 = bt.nurbs(line_0);
+    lines = [line_1];
+  } else if (letter == '7') {
+    let line_0 = [
+      tl,
+      tr,
+      bl
+    ];
+    lines = [line_0];
+  } else if (letter == '8') {
+    let line_0 = [
+      tr,
+      tl,
+      [l, t - h / 2],
+      [r, t - h / 2],
+
+      br,
+      bl,
+      [l, t - h / 2],
+      [r, t - h / 2],
+      [r, t],
+
+
+    ];
+    let line_1 = bt.nurbs(line_0);
+    lines = [line_1];
   } else if (letter != ' ') {
     let line_0 = [
       tl,
@@ -374,11 +482,4 @@ function drawLetter(letter, x, y, w, h) {
     lines = [line_0, line_1, line_2];
   }
   drawLines(lines);
-}
-
-function drawText(input) {
-  let splitText = input.split("")
-  for (let i = 0; i < splitText.length; i++) {
-    drawLetter(splitText[i], START_X + i * (LETTER_WIDTH + LETTER_GAP), START_Y, LETTER_WIDTH, LETTER_HEIGHT);
-  }
 }
