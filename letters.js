@@ -1,7 +1,7 @@
 // available characters:
-// ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890?!.
+// ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890?!.,abcdefghij
 
-const TEXT = "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG";
+const TEXT = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890?!.,abcdefghij";
 const FONT_SIZE = 28; // pt
 
 const SIDE_MARGIN = 10; // mm
@@ -39,7 +39,7 @@ function drawText(input) {
   for (let i = 0; i < splitText.length; i++) {
     drawChar(splitText[i], x, y, letter_width, letter_height);
     x = x + letter_width + 1;
-    if ((x > page_start[0] + PAGE_WIDTH - SIDE_MARGIN) && (splitText[i+1] != ' ')) {
+    if ((x > page_start[0] + PAGE_WIDTH - SIDE_MARGIN) && (splitText[i + 1] != ' ')) {
       y = y - letter_height * 1.5 - 2;
       x = page_start[0] + SIDE_MARGIN;
     }
@@ -532,6 +532,165 @@ function drawChar(letter, x, y, w, h) {
       [r - w / 2, b],
     ];
     lines = [line_0];
+  } else if (letter == ',') {
+    let line_0 = [
+      [r - w / 2, b + h / 20],
+      [l + w / 4, b - w / 4],
+    ];
+    lines = [line_0];
+  } else if (letter == 'a') {
+    let line_0 = [
+      [l, t - h / 3],
+      [r, t - h / 4],
+      [r, b + h / 4],
+      br,
+      bl,
+      [l, t - h / 2],
+      [r, b + h / 3],
+    ];
+    let line_2 = bt.nurbs(line_0);
+    lines = [line_2];
+  } else if (letter == 'b') {
+    let line_0 = [
+      tl,
+      bl
+    ];
+    let line_1 = [
+      [l, t - h / 2],
+      [r, t - h / 2],
+      br,
+      bl
+    ];
+    let line_2 = bt.nurbs(line_1);
+    lines = [line_0, line_2];
+  } else if (letter == 'c') {
+    let line_0 = [
+      [r, t - h / 2],
+      [l, t - h / 2],
+      bl,
+      br
+    ];
+    let line_1 = bt.nurbs(line_0);
+    lines = [line_1];
+  } else if (letter == 'd') {
+    let line_0 = [
+      tr,
+      br
+    ];
+    let line_1 = [
+      [r, t - h / 2],
+      [l, t - h / 2],
+      bl,
+      br
+    ];
+    let line_2 = bt.nurbs(line_1);
+    lines = [line_0, line_2];
+  } else if (letter == 'e') {
+    let line_0 = [
+      [l, b + h / 3],
+      [r, b + h / 3],
+    ];
+    let line_1 = [
+      [r, b + h / 3],
+      [r, t - h / 2],
+      [l, t - h / 2],
+      bl,
+      br,
+      [r, b + h / 10],
+    ];
+    let line_2 = bt.nurbs(line_1);
+    lines = [line_0, line_2];
+  } else if (letter == 'f') {
+    let line_0 = [
+      tr,
+      [r - w / 2, t],
+      [l + w / 2, t - h / 4],
+
+      [r - w / 2, b],
+    ];
+    let line_1 = [
+      [l + w / 4, t - h / 4],
+      [r - w / 4, t - h / 4],
+    ];
+    let line_2 = bt.nurbs(line_0);
+    lines = [line_1, line_2];
+  } else if (letter == 'g') {
+    let line_0 = [
+      [r, b + h / 3],
+      [r, t - h / 2],
+      [l, t - h / 2],
+      bl,
+      br,
+      [r, b + h / 3],
+    ];
+    let line_1 = [
+      [l, b - h / 3],
+      [l, b - h / 2],
+      [r, b - h / 2],
+      br,
+      [r, b + h / 2],
+    ];
+    let line_2 = bt.nurbs(line_0);
+    let line_3 = bt.nurbs(line_1);
+    lines = [line_2, line_3];
+  } else if (letter == 'h') {
+    let line_0 = [
+      tl,
+      bl
+    ];
+    let line_1 = [
+      bl,
+      [l, b + h / 8],
+      [l, t - h / 2],
+      [r, t - h / 2],
+      [r, b + h / 8],
+      br,
+    ];
+    let line_2 = bt.nurbs(line_1);
+    lines = [line_0, line_2];
+  } else if (letter == 'i') {
+    let line_0 = [
+      [r - w / 2, t - h / 2],
+      [r - w / 2, b],
+    ];
+    let line_1 = [
+      [l + w / 4, t - h / 2],
+      [r - w / 2, t - h / 2],
+    ];
+    let line_2 = [
+      [l + w / 4, b],
+      [r - w / 4, b],
+    ];
+    let line_3 = [
+      [l + w / 2 + w / 16, t - h / 3],
+      [l + w / 2, t - h / 3 - h / 32],
+      [r - w / 2 - w / 16, t - h / 3],
+      [l + w / 2, t - h / 3 + h / 32],
+      [l + w / 2 + w / 16, t - h / 3],
+    ];
+    let line_4 = bt.nurbs(line_3);
+    lines = [line_0, line_1, line_2, line_4];
+  } else if (letter == 'j') {
+    let line_0 = [
+      [r - w / 2, t - h / 2],
+      [r - w / 2, b],
+      [r - w / 2, b - h / 4],
+      [l + w / 4, b - h / 4],
+    ];
+    let line_1 = [
+      [l + w / 4, t - h / 2],
+      [r - w / 2, t - h / 2],
+    ];
+    let line_2 = [
+      [l + w / 2 + w / 16, t - h / 3],
+      [l + w / 2, t - h / 3 - h / 32],
+      [r - w / 2 - w / 16, t - h / 3],
+      [l + w / 2, t - h / 3 + h / 32],
+      [l + w / 2 + w / 16, t - h / 3],
+    ];
+    let line_3 = bt.nurbs(line_0);
+    let line_4 = bt.nurbs(line_2);
+    lines = [line_1, line_3, line_4];
   } else if (letter != ' ') {
     let line_0 = [
       tl,
