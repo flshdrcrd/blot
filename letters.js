@@ -1,5 +1,5 @@
 // available characters:
-// ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890?!.,abcdefghijklmnopqrstuvwxyz
+// ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890?!.,abcdefghijklmnopqrstuvwxyz_+-*/
 
 const TEXT = "Hello World!";
 const FONT_SIZE = 12; // pt
@@ -37,7 +37,17 @@ function drawText(input, fs, sm, tm, w) {
   let y = page_start[1] - letter_height - tm;
   let splitText = input.split(" ");
   for (let i = 0; i < splitText.length; i++) {
-    drawWord(splitText[i], letter_height, letter_width, x, y, fs, sm, w);
+    let word_length = (letter_width + fs / 24) * splitText[i].length
+    if ((w - x + page_start[0] - sm < word_length) && (word_length < w - sm * 2)) {
+      y = y - letter_height * 1.5 - fs / 12;
+      x = page_start[0] + sm;
+    }
+    let returned = drawWord(splitText[i], letter_height, letter_width, x, y, fs, sm, w);
+    x = returned.x;
+    y = returned.y;
+    if (x != page_start[0] + sm) {
+      x = x + letter_width + fs / 24;
+    }
   }
 }
 
@@ -51,6 +61,7 @@ function drawWord(input, lh, lw, x, y, fs, sm, w) {
       x = page_start[0] + sm;
     }
   }
+  return { x, y };
 }
 
 function drawChar(letter, x, y, w, h) {
@@ -937,6 +948,52 @@ function drawChar(letter, x, y, w, h) {
       [r, t - h / 2],
       bl,
       br
+    ];
+    lines = [line_0];
+  } else if (letter == '_') {
+    let line_0 = [
+      br,
+      bl
+    ];
+    lines = [line_0];
+  } else if (letter == '+') {
+    let line_0 = [
+      [l, t - h / 2],
+      [r, t - h / 2]
+    ];
+    let line_1 = [
+      [l + w / 2, t - h / 2 + w / 2],
+      [l + w / 2, t - h / 2 - w / 2]
+    ];
+    lines = [line_0, line_1];
+  } else if (letter == '-') {
+    let line_0 = [
+      [l, t - h / 2],
+      [r, t - h / 2]
+    ];
+    lines = [line_0];
+  } else if (letter == '*') {
+    let line_0 = [
+      [l, t - h / 2],
+      [r, t - h / 2]
+    ];
+    let line_1 = [
+      [l + w / 2, t - h / 2 + w / 2],
+      [l + w / 2, t - h / 2 - w / 2]
+    ];
+    let line_2 = [
+      [l + w/6, t - h / 2 + w / 2 - w/6],
+      [r- w/6, t - h / 2 - w / 2 + w/6]
+    ];
+    let line_3 = [
+      [l+ w/6, t - h / 2 - w / 2+ w/6],
+      [r- w/6, t - h / 2 + w / 2- w/6]
+    ];
+    lines = [line_0, line_1, line_2, line_3];
+  } else if (letter == '/') {
+    let line_0 = [
+      tr,
+      bl
     ];
     lines = [line_0];
   } else if (letter != ' ') {
