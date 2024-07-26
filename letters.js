@@ -1,8 +1,14 @@
+/*
+@title: Paper
+@author: flshdrcrd
+@snapshot: 1.png
+*/
+
 // available characters:
 // ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890?!.,abcdefghijklmnopqrstuvwxyz_+-*/
 
-const TEXT = "Hello World!";
-const FONT_SIZE = 12; // pt
+const TEXT = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+const FONT_SIZE = 9; // pt
 
 const SIDE_MARGIN = 5; // mm
 const TOP_MARGIN = 5; // mm
@@ -15,50 +21,54 @@ const PAGE_HEIGHT = 105; // mm
 
 // - - - - - - - - - -
 
-let page_start;
-
 setDocDimensions(DOC_WIDTH, DOC_HEIGHT);
-drawPage(PAGE_WIDTH, PAGE_HEIGHT, DOC_WIDTH, DOC_HEIGHT);
-drawText(TEXT, FONT_SIZE, SIDE_MARGIN, TOP_MARGIN, PAGE_WIDTH);
+drawText(TEXT,
+  FONT_SIZE,
+  SIDE_MARGIN,
+  TOP_MARGIN,
+  PAGE_WIDTH,
+  drawPage(PAGE_WIDTH, PAGE_HEIGHT, DOC_WIDTH, DOC_HEIGHT)
+);
 
 function drawPage(w, h, dw, dh) {
   const sq = new bt.Turtle();
   for (let i = 0; i < 4; i++) sq.forward(1).right(90);
   const page = bt.scale(sq.lines(), [w, h]);
   bt.translate(page, [dw / 2, dh / 2], bt.bounds(page).cc);
-  page_start = bt.bounds(page).lt;
+  let page_start = bt.bounds(page).lt;
   drawLines(page);
+  return page_start;
 }
 
-function drawText(input, fs, sm, tm, w) {
+function drawText(input, fs, sm, tm, w, ps) {
   let letter_height = fs / 72 * 25.4;
   let letter_width = letter_height * 0.5;
-  let x = page_start[0] + sm;
-  let y = page_start[1] - letter_height - tm;
+  let x = ps[0] + sm;
+  let y = ps[1] - letter_height - tm;
   let splitText = input.split(" ");
   for (let i = 0; i < splitText.length; i++) {
     let word_length = (letter_width + fs / 24) * splitText[i].length
-    if ((w - x + page_start[0] - sm < word_length) && (word_length < w - sm * 2)) {
+    if ((w - x + ps[0] - sm < word_length) && (word_length < w - sm * 2)) {
       y = y - letter_height * 1.5 - fs / 12;
-      x = page_start[0] + sm;
+      x = ps[0] + sm;
     }
-    let returned = drawWord(splitText[i], letter_height, letter_width, x, y, fs, sm, w);
+    let returned = drawWord(splitText[i], letter_height, letter_width, x, y, fs, sm, w, ps);
     x = returned.x;
     y = returned.y;
-    if (x != page_start[0] + sm) {
+    if (x != ps[0] + sm) {
       x = x + letter_width + fs / 24;
     }
   }
 }
 
-function drawWord(input, lh, lw, x, y, fs, sm, w) {
+function drawWord(input, lh, lw, x, y, fs, sm, w, ps) {
   let splitText = input.split("");
   for (let i = 0; i < splitText.length; i++) {
     drawChar(splitText[i], x, y, lw, lh);
     x = x + lw + fs / 24;
-    if ((x > page_start[0] + w - sm) && (splitText[i + 1] != ' ')) {
+    if ((x > ps[0] + w - sm) && (splitText[i + 1] != ' ')) {
       y = y - lh * 1.5 - fs / 12;
-      x = page_start[0] + sm;
+      x = ps[0] + sm;
     }
   }
   return { x, y };
@@ -69,24 +79,34 @@ function drawChar(letter, x, y, w, h) {
   let b = y;
   let l = x;
   let r = x + w;
+  let mx = l + w / 2;
+  let my = b + h / 2;
 
   let bl = [x, y];
   let br = [x + w, y];
   let tl = [x, y + h];
   let tr = [x + w, y + h];
+  let mt = [mx, t];
+  let mb = [mx, b];
+  let ml = [l, my];
+  let mr = [r, my];
+  let c = [mx, my];
 
   let lines;
 
   if (letter == 'A') {
     let line_0 = [
       bl,
-      [l + w / 2, t]
+      mt
     ];
     let line_1 = [
-      [l + w / 2, t],
+      mt,
       br
     ];
-    let line_2 = [bt.bounds([line_0]).cc, bt.bounds([line_1]).cc];
+    let line_2 = [
+      [mx - w / 4, my],
+      [mx + w / 4, my],
+    ];
     lines = [line_0, line_1, line_2];
   } else if (letter == 'B') {
     let line_0 = [
@@ -96,12 +116,12 @@ function drawChar(letter, x, y, w, h) {
     let line_1 = [
       tl,
       tr,
-      [r, t - h / 2],
-      [l, t - h / 2]
+      mr,
+      ml
     ];
     let line_2 = [
-      [l, t - h / 2],
-      [r, t - h / 2],
+      ml,
+      mr,
       br,
       bl
     ];
@@ -140,8 +160,8 @@ function drawChar(letter, x, y, w, h) {
       tr
     ];
     let line_2 = [
-      [r, t - h / 2],
-      [l, t - h / 2]
+      mr,
+      ml
     ];
     let line_3 = [
       bl,
@@ -158,8 +178,8 @@ function drawChar(letter, x, y, w, h) {
       tr
     ];
     let line_2 = [
-      [r, t - h / 2],
-      [l, t - h / 2]
+      mr,
+      ml
     ];
     lines = [line_0, line_1, line_2];
   } else if (letter == 'G') {
@@ -171,8 +191,8 @@ function drawChar(letter, x, y, w, h) {
     ];
     let line_1 = [
       br,
-      [r, t - h / 2],
-      [r - w / 2, t - h / 2]
+      mr,
+      c
     ];
     let line_2 = bt.nurbs(line_0);
     lines = [line_1, line_2];
@@ -182,8 +202,8 @@ function drawChar(letter, x, y, w, h) {
       bl
     ];
     let line_1 = [
-      [l, t - h / 2],
-      [r, t - h / 2]
+      ml,
+      mr
     ];
     let line_2 = [
       tr,
@@ -192,8 +212,8 @@ function drawChar(letter, x, y, w, h) {
     lines = [line_0, line_1, line_2];
   } else if (letter == 'I') {
     let line_0 = [
-      [r - w / 2, t],
-      [r - w / 2, b]
+      mt,
+      mb
     ];
     let line_1 = [
       [l + w / 4, t],
@@ -227,11 +247,11 @@ function drawChar(letter, x, y, w, h) {
       bl
     ];
     let line_1 = [
-      [l, t - h / 2],
+      ml,
       tr
     ];
     let line_2 = [
-      [l, t - h / 2],
+      ml,
       br
     ];
     lines = [line_0, line_1, line_2];
@@ -249,7 +269,7 @@ function drawChar(letter, x, y, w, h) {
     let line_0 = [
       bl,
       tl,
-      [r - w / 2, t - h / 2],
+      c,
       tr,
       br
     ];
@@ -280,8 +300,8 @@ function drawChar(letter, x, y, w, h) {
     let line_1 = [
       tl,
       tr,
-      [r, t - h / 2],
-      [l, t - h / 2]
+      mr,
+      ml
     ];
 
     let line_2 = bt.nurbs(line_1);
@@ -308,11 +328,11 @@ function drawChar(letter, x, y, w, h) {
     let line_1 = [
       tl,
       tr,
-      [r, t - h / 2],
-      [l, t - h / 2]
+      mr,
+      ml
     ];
     let line_2 = [
-      [l, t - h / 2],
+      ml,
       br
     ];
     let line_3 = bt.nurbs(line_1);
@@ -330,8 +350,8 @@ function drawChar(letter, x, y, w, h) {
     lines = [line_1];
   } else if (letter == 'T') {
     let line_0 = [
-      [r - w / 2, t],
-      [r - w / 2, b]
+      mt,
+      mb
     ];
     let line_1 = [
       tl,
@@ -350,7 +370,7 @@ function drawChar(letter, x, y, w, h) {
   } else if (letter == 'V') {
     let line_0 = [
       tl,
-      [r - w / 2, b],
+      mb,
       tr
     ];
     lines = [line_0];
@@ -358,7 +378,7 @@ function drawChar(letter, x, y, w, h) {
     let line_0 = [
       tl,
       [l + w / 6, b],
-      [r - w / 2, t - h / 2],
+      c,
       [r - w / 6, b],
       tr
     ];
@@ -376,12 +396,12 @@ function drawChar(letter, x, y, w, h) {
   } else if (letter == 'Y') {
     let line_0 = [
       tl,
-      [r - w / 2, t - h / 2],
+      c,
       tr
     ];
     let line_1 = [
-      [r - w / 2, t - h / 2],
-      [r - w / 2, b]
+      c,
+      mb
     ];
     lines = [line_0, line_1];
   } else if (letter == 'Z') {
@@ -395,8 +415,8 @@ function drawChar(letter, x, y, w, h) {
   } else if (letter == '1') {
     let line_0 = [
       [l + w / 6, t - w / 2],
-      [r - w / 2, t],
-      [r - w / 2, b]
+      mt,
+      mb
     ];
     let line_1 = [
       [l + w / 6, b],
@@ -408,7 +428,7 @@ function drawChar(letter, x, y, w, h) {
       [l, t - h / 6],
       tl,
       tr,
-      [r, t - h / 2],
+      mr,
       bl
     ];
     let line_1 = [
@@ -421,12 +441,12 @@ function drawChar(letter, x, y, w, h) {
     let line_0 = [
       tl,
       tr,
-      [r, t - h / 2],
-      [l + w / 3, t - h / 2]
+      mr,
+      [l + w / 3, my]
     ];
     let line_1 = [
-      [l + w / 3, t - h / 2],
-      [r, t - h / 2],
+      [l + w / 3, my],
+      mr,
       br,
       bl
     ];
@@ -445,12 +465,12 @@ function drawChar(letter, x, y, w, h) {
     let line_0 = [
       tr,
       tl,
-      [l, t - h / 2]
+      ml
 
     ];
     let line_1 = [
-      [l, t - h / 2],
-      [r, t - h / 2],
+      ml,
+      mr,
       br,
       bl
     ];
@@ -461,11 +481,11 @@ function drawChar(letter, x, y, w, h) {
       [r, t - h / 8],
       tr,
       tl,
-      [l, t - h / 2],
+      ml,
       bl,
       br,
-      [r, t - h / 2],
-      [l, b + h / 2],
+      mr,
+      ml,
       [l, b + h / 3]
     ];
     let line_1 = bt.nurbs(line_0);
@@ -481,12 +501,12 @@ function drawChar(letter, x, y, w, h) {
     let line_0 = [
       tr,
       tl,
-      [l, t - h / 2],
-      [r, t - h / 2],
+      ml,
+      mr,
       br,
       bl,
-      [l, t - h / 2],
-      [r, t - h / 2],
+      ml,
+      mr,
       [r, t]
     ];
     let line_1 = bt.nurbs(line_0);
@@ -496,11 +516,11 @@ function drawChar(letter, x, y, w, h) {
       [l, b + h / 8],
       bl,
       br,
-      [r, b + h / 2],
+      mr,
       tr,
       tl,
-      [l, b + h / 2],
-      [r, t - h / 2],
+      ml,
+      mr,
       [r, t - h / 3]
     ];
     let line_1 = bt.nurbs(line_0);
@@ -524,55 +544,55 @@ function drawChar(letter, x, y, w, h) {
       [l, t - h / 6],
       tl,
       tr,
-      [r, t - h / 2],
-      [r - w / 2, b + h / 3],
-      [r - w / 2, b + h / 6]
+      mr,
+      [mx, b + h / 3],
+      [mx, b + h / 6]
     ];
     let line_1 = [
-      [l + w / 2 + w / 16, b + h / 32],
-      [l + w / 2, b],
-      [r - w / 2 - w / 16, b + h / 32],
-      [l + w / 2, b + h / 16],
-      [l + w / 2 + w / 16, b + h / 32]
+      [mx + w / 16, b + h / 32],
+      mb,
+      [mx - w / 16, b + h / 32],
+      [mx, b + h / 16],
+      [mx + w / 16, b + h / 32]
     ];
     let line_2 = bt.nurbs(line_0);
     let line_3 = bt.nurbs(line_1);
     lines = [line_2, line_3];
   } else if (letter == '!') {
     let line_0 = [
-      [r - w / 2, t],
-      [r - w / 2, b + h / 6]
+      mt,
+      [mx, b + h / 6]
     ];
     let line_1 = [
-      [l + w / 2 + w / 16, b + h / 32],
-      [l + w / 2, b],
-      [r - w / 2 - w / 16, b + h / 32],
-      [l + w / 2, b + h / 16],
-      [l + w / 2 + w / 16, b + h / 32]
+      [mx + w / 16, b + h / 32],
+      mb,
+      [mx - w / 16, b + h / 32],
+      [mx, b + h / 16],
+      [mx + w / 16, b + h / 32]
     ];
     let line_2 = bt.nurbs(line_1);
     lines = [line_0, line_2];
   } else if (letter == '.') {
     let line_0 = [
-      [l + w / 2 + w / 16, b + h / 32],
-      [l + w / 2, b],
-      [r - w / 2 - w / 16, b + h / 32],
-      [l + w / 2, b + h / 16],
-      [l + w / 2 + w / 16, b + h / 32]
+      [mx + w / 16, b + h / 32],
+      mb,
+      [mx - w / 16, b + h / 32],
+      [mx, b + h / 16],
+      [mx + w / 16, b + h / 32]
     ];
     let line_1 = bt.nurbs(line_0);
     lines = [line_1];
   } else if (letter == ',') {
     let line_0 = [
-      [r - w / 2, b + h / 20],
+      [mx, b + h / 16],
       [l + w / 4, b - w / 4]
     ];
     lines = [line_0];
   } else if (letter == 'a') {
     let line_0 = [
-      [l, t - h / 2],
-      [l + w / 10, t - h / 2],
-      [r, t - h / 2],
+      ml,
+      [l + w / 10, my],
+      mr,
       [r, b + h / 10],
       br
     ];
@@ -594,8 +614,8 @@ function drawChar(letter, x, y, w, h) {
     ];
     let line_1 = [
       [l, b + h / 3],
-      [l, t - h / 2],
-      [r, t - h / 2],
+      ml,
+      mr,
       br,
       bl,
       [l, b + h / 3]
@@ -604,9 +624,9 @@ function drawChar(letter, x, y, w, h) {
     lines = [line_0, line_2];
   } else if (letter == 'c') {
     let line_0 = [
-      [r, t - h / 2],
-      [r - w / 10, t - h / 2],
-      [l, t - h / 2],
+      mr,
+      [r - w / 10, my],
+      ml,
       bl,
       [r - w / 10, b],
       br
@@ -620,8 +640,8 @@ function drawChar(letter, x, y, w, h) {
     ];
     let line_1 = [
       [r, b + h / 3],
-      [r, t - h / 2],
-      [l, t - h / 2],
+      mr,
+      ml,
       bl,
       br,
       [r, b + h / 3]
@@ -635,8 +655,8 @@ function drawChar(letter, x, y, w, h) {
     ];
     let line_1 = [
       [r, b + h / 3],
-      [r, t - h / 2],
-      [l, t - h / 2],
+      mr,
+      ml,
       bl,
       br,
       [r, b + h / 10]
@@ -645,9 +665,9 @@ function drawChar(letter, x, y, w, h) {
     lines = [line_0, line_2];
   } else if (letter == 'f') {
     let line_0 = [
-      [r - w / 2, b],
-      [r - w / 2, t - h / 4],
-      [r - w / 2, t],
+      mb,
+      [mx, t - h / 4],
+      mt,
       tr
     ];
     let line_1 = [
@@ -659,8 +679,8 @@ function drawChar(letter, x, y, w, h) {
   } else if (letter == 'g') {
     let line_0 = [
       [r, b + h / 3],
-      [r, t - h / 2],
-      [l, t - h / 2],
+      mr,
+      ml,
       bl,
       br,
       [r, b + h / 3]
@@ -670,7 +690,7 @@ function drawChar(letter, x, y, w, h) {
       [l, b - h / 2],
       [r, b - h / 2],
       br,
-      [r, b + h / 2]
+      mr
     ];
     let line_2 = bt.nurbs(line_0);
     let line_3 = bt.nurbs(line_1);
@@ -683,8 +703,8 @@ function drawChar(letter, x, y, w, h) {
     let line_1 = [
       bl,
       [l, b + h / 8],
-      [l, t - h / 2],
-      [r, t - h / 2],
+      ml,
+      mr,
       [r, b + h / 8],
       br
     ];
@@ -692,43 +712,43 @@ function drawChar(letter, x, y, w, h) {
     lines = [line_0, line_2];
   } else if (letter == 'i') {
     let line_0 = [
-      [r - w / 2, t - h / 2],
-      [r - w / 2, b]
+      c,
+      mb
     ];
     let line_1 = [
-      [l + w / 4, t - h / 2],
-      [r - w / 2, t - h / 2]
+      [l + w / 4, my],
+      c
     ];
     let line_2 = [
       [l + w / 4, b],
       [r - w / 4, b]
     ];
     let line_3 = [
-      [l + w / 2 + w / 16, t - h / 3],
-      [l + w / 2, t - h / 3 - h / 32],
-      [r - w / 2 - w / 16, t - h / 3],
-      [l + w / 2, t - h / 3 + h / 32],
-      [l + w / 2 + w / 16, t - h / 3]
+      [mx + w / 16, t - h / 3],
+      [mx, t - h / 3 - h / 32],
+      [mx - w / 16, t - h / 3],
+      [mx, t - h / 3 + h / 32],
+      [mx + w / 16, t - h / 3]
     ];
     let line_4 = bt.nurbs(line_3);
     lines = [line_0, line_1, line_2, line_4];
   } else if (letter == 'j') {
     let line_0 = [
-      [r - w / 2, t - h / 2],
-      [r - w / 2, b],
-      [r - w / 2, b - h / 4],
+      c,
+      mb,
+      [mx, b - h / 4],
       [l + w / 4, b - h / 4]
     ];
     let line_1 = [
-      [l + w / 4, t - h / 2],
-      [r - w / 2, t - h / 2]
+      [l + w / 4, my],
+      c
     ];
     let line_2 = [
-      [l + w / 2 + w / 16, t - h / 3],
-      [l + w / 2, t - h / 3 - h / 32],
-      [r - w / 2 - w / 16, t - h / 3],
-      [l + w / 2, t - h / 3 + h / 32],
-      [l + w / 2 + w / 16, t - h / 3]
+      [mx + w / 16, t - h / 3],
+      [mx, t - h / 3 - h / 32],
+      [mx - w / 16, t - h / 3],
+      [mx, t - h / 3 + h / 32],
+      [mx + w / 16, t - h / 3]
     ];
     let line_3 = bt.nurbs(line_0);
     let line_4 = bt.nurbs(line_2);
@@ -740,7 +760,7 @@ function drawChar(letter, x, y, w, h) {
     ];
     let line_1 = [
       [l, b + h / 4],
-      [r, t - h / 2]
+      mr
     ];
     let line_2 = [
       [l + w / 4, b + h / 4 + h / 16],
@@ -749,12 +769,12 @@ function drawChar(letter, x, y, w, h) {
     lines = [line_0, line_1, line_2];
   } else if (letter == 'l') {
     let line_0 = [
-      [r - w / 2, t],
-      [r - w / 2, b]
+      mt,
+      mb
     ];
     let line_1 = [
       [l + w / 4, t],
-      [r - w / 2, t]
+      mt
     ];
     let line_2 = [
       [l + w / 4, b],
@@ -763,22 +783,22 @@ function drawChar(letter, x, y, w, h) {
     lines = [line_0, line_1, line_2];
   } else if (letter == 'm') {
     let line_0 = [
-      [l, b + h / 2],
+      ml,
       bl
     ];
     let line_1 = [
       bl,
       [l, b + h / 8],
-      [l, t - h / 2],
-      [l + w / 2, t - h / 2],
-      [l + w / 2, b + h / 8],
-      [l + w / 2, b]
+      ml,
+      c,
+      [mx, b + h / 8],
+      mb
     ];
     let line_2 = [
-      [l + w / 2, b],
-      [l + w / 2, b + h / 8],
-      [l + w / 2, t - h / 2],
-      [r, t - h / 2],
+      mb,
+      [mx, b + h / 8],
+      c,
+      mr,
       [r, b + h / 8],
       br
     ];
@@ -787,14 +807,14 @@ function drawChar(letter, x, y, w, h) {
     lines = [line_0, line_3, line_4];
   } else if (letter == 'n') {
     let line_0 = [
-      [l, b + h / 2],
+      ml,
       bl
     ];
     let line_1 = [
       bl,
       [l, b + h / 8],
-      [l, t - h / 2],
-      [r, t - h / 2],
+      ml,
+      mr,
       [r, b + h / 8],
       br
     ];
@@ -802,41 +822,41 @@ function drawChar(letter, x, y, w, h) {
     lines = [line_0, line_2];
   } else if (letter == 'o') {
     let line_0 = [
-      [r, t - h / 2],
-      [l, t - h / 2],
+      mr,
+      ml,
       bl,
       br,
-      [r, t - h / 2]
+      mr
     ];
     let line_1 = bt.nurbs(line_0);
     lines = [line_1];
   } else if (letter == 'p') {
     let line_0 = [
       [l, b + h / 3],
-      [l, t - h / 2],
-      [r, t - h / 2],
+      ml,
+      mr,
       br,
       bl,
       [l, b + h / 3]
     ];
     let line_1 = [
       [l, b - h / 3],
-      [l, b + h / 2]
+      ml
     ];
     let line_2 = bt.nurbs(line_0);
     lines = [line_1, line_2];
   } else if (letter == 'q') {
     let line_0 = [
       [r, b + h / 3],
-      [r, t - h / 2],
-      [l, t - h / 2],
+      mr,
+      ml,
       bl,
       br,
       [r, b + h / 3]
     ];
     let line_1 = [
       [r, b - h / 3],
-      [r, b + h / 2]
+      mr
     ];
     let line_2 = bt.nurbs(line_0);
     lines = [line_1, line_2];
@@ -846,24 +866,24 @@ function drawChar(letter, x, y, w, h) {
       [l + w / 3 + w / 4, b]
     ];
     let line_1 = [
-      [l, b + h / 2],
-      [l + w / 3, b + h / 2],
+      ml,
+      [l + w / 3, my],
       [l + w / 3, b + h / 10],
       [l + w / 3, b]
     ];
     let line_2 = [
       [l + w / 3, b],
       [l + w / 3, b + h / 10],
-      [l + w / 3, b + h / 2],
-      [r, b + h / 2]
+      [l + w / 3, my],
+      mr
     ];
     let line_3 = bt.nurbs(line_1);
     let line_4 = bt.nurbs(line_2);
     lines = [line_0, line_3, line_4];
   } else if (letter == 's') {
     let line_0 = [
-      [r, t - h / 2],
-      [l, t - h / 2],
+      mr,
+      ml,
       [l, b + h / 4],
       [r, b + h / 4],
       br,
@@ -873,9 +893,9 @@ function drawChar(letter, x, y, w, h) {
     lines = [line_1];
   } else if (letter == 't') {
     let line_0 = [
-      [r - w / 2, t],
-      [r - w / 2, b + h / 4],
-      [r - w / 2, b],
+      mt,
+      [mx, b + h / 4],
+      mb,
       br
     ];
     let line_1 = [
@@ -886,48 +906,48 @@ function drawChar(letter, x, y, w, h) {
     lines = [line_1, line_2];
   } else if (letter == 'u') {
     let line_0 = [
-      [r, b + h / 2],
+      mr,
       br
     ];
     let line_1 = [
-      [l, t - h / 2],
+      ml,
       [l, b + h / 3],
       bl,
       br,
       [r, b + h / 3],
-      [r, t - h / 2]
+      mr
     ];
     let line_2 = bt.nurbs(line_1);
     lines = [line_0, line_2];
   } else if (letter == 'v') {
     let line_0 = [
-      [l, b + h / 2],
-      [l + w / 2, b],
-      [r, b + h / 2]
+      ml,
+      mb,
+      mr
     ];
     lines = [line_0];
   } else if (letter == 'w') {
     let line_0 = [
-      [l, b + h / 2],
+      ml,
       [l + w / 4, b],
-      [l + w / 2, b + h / 3],
+      [mx, b + h / 3],
       [r - w / 4, b],
-      [r, b + h / 2]
+      mr
     ];
     lines = [line_0];
   } else if (letter == 'x') {
     let line_0 = [
-      [l, b + h / 2],
+      ml,
       br
     ];
     let line_1 = [
-      [r, b + h / 2],
+      mr,
       bl
     ];
     lines = [line_0, line_1];
   } else if (letter == 'y') {
     let line_0 = [
-      [l, t - h / 2],
+      ml,
       bl,
       br,
       [r, b + h / 3]
@@ -937,15 +957,15 @@ function drawChar(letter, x, y, w, h) {
       [l, b - h / 2],
       [r, b - h / 2],
       br,
-      [r, b + h / 2]
+      mr
     ];
     let line_2 = bt.nurbs(line_0);
     let line_3 = bt.nurbs(line_1);
     lines = [line_2, line_3];
   } else if (letter == 'z') {
     let line_0 = [
-      [l, t - h / 2],
-      [r, t - h / 2],
+      ml,
+      mr,
       bl,
       br
     ];
@@ -958,36 +978,36 @@ function drawChar(letter, x, y, w, h) {
     lines = [line_0];
   } else if (letter == '+') {
     let line_0 = [
-      [l, t - h / 2],
-      [r, t - h / 2]
+      ml,
+      mr
     ];
     let line_1 = [
-      [l + w / 2, t - h / 2 + w / 2],
-      [l + w / 2, t - h / 2 - w / 2]
+      [mx, my + w / 2],
+      [mx, my - w / 2]
     ];
     lines = [line_0, line_1];
   } else if (letter == '-') {
     let line_0 = [
-      [l, t - h / 2],
-      [r, t - h / 2]
+      ml,
+      mr
     ];
     lines = [line_0];
   } else if (letter == '*') {
     let line_0 = [
-      [l, t - h / 2],
-      [r, t - h / 2]
+      ml,
+      mr
     ];
     let line_1 = [
-      [l + w / 2, t - h / 2 + w / 2],
-      [l + w / 2, t - h / 2 - w / 2]
+      [mx, my + w / 2],
+      [mx, my - w / 2]
     ];
     let line_2 = [
-      [l + w/6, t - h / 2 + w / 2 - w/6],
-      [r- w/6, t - h / 2 - w / 2 + w/6]
+      [l + w / 6, my + w / 2 - w / 6],
+      [r - w / 6, my - w / 2 + w / 6]
     ];
     let line_3 = [
-      [l+ w/6, t - h / 2 - w / 2+ w/6],
-      [r- w/6, t - h / 2 + w / 2- w/6]
+      [l + w / 6, my - w / 2 + w / 6],
+      [r - w / 6, my + w / 2 - w / 6]
     ];
     lines = [line_0, line_1, line_2, line_3];
   } else if (letter == '/') {
